@@ -1,0 +1,14 @@
+This ProM software is provided under the GNU General Public License ("GPL"), Version 2 or any later version, with an exception for Apromore, see below.
+
+For those not familiar with the GNU GPL (http://www.gnu.org/licenses/gpl-2.0.html), the license basically allows you to:
+
+- Use this ProM software at no charge.
+- Distribute verbatim copies of the software in source or binary form.
+- Sell verbatim copies of the software for a media fee, or sell support for the software.
+
+What this license does not allow you to do is make changes or add features to this ProM software and then sell a binary distribution without source code. You must provide source for any changes or additions to the software, and all code must be provided under the GPL. The only exception to this are the portions of this ProM software covered by the Apromore license exception outlined next.
+
+Apromore License Exception
+As the copyright holder of this ProM software, TU/e explicitly allows the compilation and distribution of this ProM software with the Apromore software, provided that when and where (a part of) this ProM software is being executed in Apromore, the unscaled ProM logo must be fully visible in Apromore and not visually obscured by other elements, and must link back to http://www.promtools.org.
+
+No developer is required to provide this exception in a derived work.
