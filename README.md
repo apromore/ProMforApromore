@@ -1,2 +1,2 @@
 # ProMforApromore
-Distribution of ProM customized for Apromore
+Distribution of ProM Framework customized for Apromore
