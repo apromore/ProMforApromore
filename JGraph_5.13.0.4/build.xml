@@ -1,0 +1,181 @@
+<!--
+
+ @(#)build.xml	1.0 03-JUL-04
+
+ Copyright (c) 2001-2009 JGraph Ltd
+
+-->
+
+<!-- ===================== Project Properties =========================== -->
+
+<project name="jgraph" default="all" basedir=".">
+
+	<property name="app.name"       value="JGraph"/>
+	<property name="app.jar"       	value="jgraph.jar"/>
+	<property name="app.layoutjar"  value="jgraphlayout.jar"/>
+	<property name="app.version"    value="5.13.0.4"/>
+	<property name="longversion"    value="5.13.0.4"/>
+
+	<!-- ===================== Project Environment =========================== -->
+
+	<property name="source.home"    value="${basedir}/src"/>
+	<property name="example.home"   value="${basedir}/examples"/>
+	<property name="example.class"  value="com.jgraph.example.Main"/>
+
+	<!--  ==================== Compilation Options ==================== -->
+
+	<property name="compile.debug"       value="false"/>
+	<property name="compile.deprecation" value="false"/>
+	<property name="compile.optimize"    value="true"/>
+
+	<!-- ===================== Build Environment =========================== -->
+
+	<property name="build.home"    value="${basedir}/build"/>
+	<property name="dist.home"     value="${basedir}/dist"/>
+	<property name="dist.name"     value="${ant.project.name}-${app.version}"/>
+	<property name="dist.layoutname"     value="${ant.project.name}layout-${app.version}"/>
+	<property name="l2fprod.jar"    value="${basedir}/jars/l2fprod-common-all.jar"/>
+
+	<!--  ==================== All ==================== -->
+
+	<target name="all" depends="dist"
+		description="Clean up and produce all distributions"/>
+
+	<!--  ==================== Clean ==================== -->
+
+	<target name="clean" description="Delete all generated files and directories">
+		<delete dir="${build.home}/"/>
+		<delete dir="${dist.home}/"/>
+	</target>
+
+	<!--  ==================== Init ==================== -->
+
+	<target name="init" description="Initialize the build Java ${java.specification.version} Build">
+		<tstamp/>
+		<mkdir dir="${build.home}"/>
+		<mkdir dir="${build.home}/classes"/>
+		<mkdir dir="${build.home}/doc"/>
+		<mkdir dir="${build.home}/doc/api"/>
+		<mkdir dir="${build.home}/lib"/>
+	</target>
+
+	<!--  ==================== Generate ==================== -->
+
+	<target name="generate" depends="init" description="Generate the build tree">
+		<copy todir="${build.home}/src">
+			<fileset dir="${source.home}" includes="**/*.java,**/*.html"/>
+		</copy>
+
+		<!-- Examples -->
+		<copy todir="${build.home}/examples">
+			<fileset dir="${example.home}" includes="**/*.java,**/*.gif"/>
+		</copy>
+	</target>
+
+	<!--  ==================== Compile ==================== -->
+
+	<target name="compile" depends="generate" description="Compile the build tree">
+
+		<!-- Compile sources -->
+		<javac srcdir="${build.home}/src"
+			debug="${compile.debug}"
+			deprecation="${compile.deprecation}"
+			optimize="${compile.optimize}"
+			destdir="${build.home}/classes">
+			<classpath>
+				<pathelement path="${build.home}/classes"/>
+			</classpath>
+		</javac>
+
+	</target>
+
+	<!--  ==================== Apidoc ==================== -->
+
+	<target name="apidoc" depends="init" description="Generate the api specification (javadoc)">
+		<copy todir="${build.home}/doc">
+			<fileset dir="${basedir}/doc" includes="**/*"/>
+		</copy>
+		<javadoc packagenames="org.jgraph.*,com.jgraph.*"
+				 sourcepath="${build.home}/src"
+				 classpath="${build.home}/classes" 
+				 destdir="${build.home}/doc/api"
+				 use="true"
+				 author="false"
+				 version="false"
+				 windowtitle="${app.name} v${app.version} API Specification"
+				 doctitle="${app.name} v${app.version} API Specification">
+			<header>
+				<![CDATA[<p>
+				<b>${app.name}</b>
+				<br>v${app.version}</p>]]></header>
+			<bottom>
+				<![CDATA[<font size=1>Copyright (C) 2001-2009 <a href="http://www.jgraph.com/"
+				target="_blank">JGraph Ltd</a>. All rights reserved.</font>]]></bottom>
+		<link href="http://java.sun.com/j2se/${java.specification.version}/docs/api"/>
+	</javadoc>
+</target>
+
+<!--  ==================== Doc ==================== -->
+
+<target name="doc" depends="apidoc" description="Generate all documentation"/>
+
+<!--  ==================== Jar ==================== -->
+
+<target name="jar" depends="compile, doc" description="Build all Java archives (JARs)">
+	<jar jarfile="${build.home}/lib/${app.jar}" basedir="${build.home}/classes"/>
+</target>
+
+<!--  ==================== Build ==================== -->
+
+<target name="build" depends="jar"
+		description="Run all tasks to completely populate the build directory"/>
+
+<!--  ==================== Distclean ==================== -->
+
+<target name="distclean" description="Clean up the distribution files only">
+	<delete dir="${dist.home}/"/>
+</target>
+
+<!--  ==================== Dist ==================== -->
+
+<target name="dist" depends="build" description="Produce fresh distributions">
+</target>
+
+<!--  ==================== Example ==================== -->
+
+<target name="compile-example" depends="compile" description="Compile the main example">
+	<mkdir dir="${build.home}/examples"/>
+
+	<!-- Compile examples -->
+	<javac srcdir="${example.home}"
+			debug="${compile.debug}"
+			deprecation="${compile.deprecation}"
+			optimize="${compile.optimize}"
+			destdir="${build.home}/examples">
+		<classpath>
+			<pathelement path="${build.home}/classes"/>
+			<pathelement path="${build.home}/examples"/>
+			<pathelement path="${l2fprod.jar}"/>
+		</classpath>
+	</javac>
+	<unjar src="${l2fprod.jar}" dest="${build.home}/examples"/>
+
+</target>
+
+<!--  ==================== Test ==================== -->
+
+<target name="example" depends="compile-example" description="Run the main example">
+
+	<!-- Run main example -->
+	<java fork="true" classname="${example.class}">
+		<arg value="test.png"/>
+		<classpath>
+			<pathelement path="${build.home}/classes"/>
+			<pathelement path="${build.home}/examples"/>
+		</classpath>
+	</java>
+
+</target>
+
+</project>
+
