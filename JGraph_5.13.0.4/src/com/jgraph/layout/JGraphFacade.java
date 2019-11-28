@@ -34,6 +34,7 @@ import javax.swing.SwingConstants;
 
 import org.jgraph.JGraph;
 import org.jgraph.graph.AttributeMap;
+import org.jgraph.graph.AttributeMap.SerializablePoint2D;
 import org.jgraph.graph.CellView;
 import org.jgraph.graph.DefaultGraphModel;
 import org.jgraph.graph.Edge;
@@ -41,7 +42,6 @@ import org.jgraph.graph.GraphConstants;
 import org.jgraph.graph.GraphLayoutCache;
 import org.jgraph.graph.GraphModel;
 import org.jgraph.graph.Port;
-import org.jgraph.graph.AttributeMap.SerializablePoint2D;
 
 import com.jgraph.algebra.JGraphAlgebra;
 import com.jgraph.algebra.JGraphUnionFind;
@@ -137,7 +137,7 @@ public class JGraphFacade {
 	/**
 	 * The default comparator to be used where ordering is required in layouts
 	 */
-	protected transient Comparator order = new DefaultComparator();
+	protected transient Comparator order = new DefaultComparator2();
 
 	/**
 	 * The default cost function used for shortest path search.
@@ -1250,7 +1250,8 @@ public class JGraphFacade {
 	 * @see #createNestedMap(boolean, boolean)
 	 * @see GraphConstants#merge(Map, Map)
 	 */
-	public Map createNestedMap(Map nestedMap) {
+	@Deprecated
+    public Map createNestedMap(Map nestedMap) {
 		Map targetMap = createNestedMap(false, false);
 		return GraphConstants.merge(nestedMap, targetMap);
 	}
@@ -1471,7 +1472,7 @@ public class JGraphFacade {
 		Rectangle2D ret = null;
 		Iterator it = vertices.iterator();
 		while (it.hasNext()) {
-			Rectangle2D r = (Rectangle2D) getBounds(it.next());
+			Rectangle2D r = getBounds(it.next());
 			if (r != null) {
 				if (ret == null)
 					ret = (Rectangle2D) r.clone();
@@ -2710,7 +2711,8 @@ public class JGraphFacade {
 		 * 
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
-		public int compare(Object c1, Object c2) {
+		@Override
+        public int compare(Object c1, Object c2) {
 			Object p1 = model.getParent(c1);
 			Object p2 = model.getParent(c2);
 			int index1 = (p1 == null) ? model.getIndexOfRoot(c1) : model
@@ -2721,6 +2723,39 @@ public class JGraphFacade {
 		}
 
 	}
+	
+    // Bruce experimenting 27.11.2019
+    public class DefaultComparator2 implements Comparator {
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+         */
+        @Override
+        public int compare(Object c1, Object c2) {
+            String value1 = model.getValue(c1).toString();
+            String value2 = model.getValue(c2).toString();
+            
+            String value1Compare = value1;
+            int brPos = value1.indexOf("<br>");
+            if (brPos >= 0) value1Compare = value1.substring(6,brPos); 
+
+            String value2Compare = value2;
+            brPos = value2.indexOf("<br>");
+            if (brPos >= 0) value2Compare = value2.substring(6,brPos); 
+
+            return value1Compare.compareTo(value2Compare);
+//          Object p1 = model.getParent(c1);
+//          Object p2 = model.getParent(c2);
+//          int index1 = (p1 == null) ? model.getIndexOfRoot(c1) : model
+//                  .getIndexOfChild(p1, c1);
+//          int index2 = (p2 == null) ? model.getIndexOfRoot(c2) : model
+//                  .getIndexOfChild(p2, c2);
+//          return new Integer(index1).compareTo(new Integer(index2));
+        }
+
+    }	
 
 	/**
 	 * @return Returns the ordered.

@@ -12,7 +12,6 @@ package com.jgraph.layout.hierarchical;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -167,7 +166,8 @@ public class JGraphHierarchicalLayout implements JGraphLayout,
 	 *            the facade object that describes and filters the graph to be
 	 *            acted upon
 	 */
-	public void run(JGraphFacade facade) {
+	@Override
+    public void run(JGraphFacade facade) {
 		boolean rootsWereDetermined = false;
 		if (facade.getRoots() == null || facade.getRoots().size() == 0) {
 			/*
@@ -353,7 +353,7 @@ public class JGraphHierarchicalLayout implements JGraphLayout,
 						// vertices of this facade.
 						// or, or if their parent is in case of edgePromotion.
 						List neighbours = facade.getNeighbours(cell, vertexSet,
-								false);
+								true);
 						Set neighboursToDo = new HashSet();
 						Iterator it = neighbours.iterator();
 						while (it.hasNext()) {
@@ -479,14 +479,16 @@ public class JGraphHierarchicalLayout implements JGraphLayout,
 	/**
 	 * Returns <code>Hierarchical</code>, the name of this algorithm.
 	 */
-	public String toString() {
+	@Override
+    public String toString() {
 		return "Hierarchical";
 	}
 
 	/**
 	 * @return Returns the progress.
 	 */
-	public JGraphLayoutProgress getProgress() {
+	@Override
+    public JGraphLayoutProgress getProgress() {
 		return progress;
 	}
 
