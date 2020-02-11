@@ -21,7 +21,6 @@ import java.util.Map;
 import com.jgraph.layout.JGraphFacade;
 import com.jgraph.layout.JGraphLayout;
 import com.jgraph.layout.JGraphLayoutProgress;
-import com.jgraph.layout.hierarchical.JGraphMedianHybridCrossingReduction.MedianCellSorter;
 import com.jgraph.layout.hierarchical.model.JGraphAbstractHierarchyCell;
 import com.jgraph.layout.hierarchical.model.JGraphHierarchyModel;
 import com.jgraph.layout.hierarchical.model.JGraphHierarchyRank;
@@ -68,7 +67,8 @@ public class JGraphMedianHybridCrossingReduction implements
 	 *            an internal model of the hierarchical layout
 	 * @return the updated hierarchy model
 	 */
-	public JGraphHierarchyModel run(JGraphFacade facade,
+	@Override
+    public JGraphHierarchyModel run(JGraphFacade facade,
 			JGraphHierarchyModel model) {
 		if (model == null) {
 			return null;
@@ -526,31 +526,40 @@ public class JGraphMedianHybridCrossingReduction implements
 		 * @return the standard return you would expect when comparing two
 		 *         double
 		 */
-		public int compareTo(Object arg0) {
+		@Override
+        public int compareTo(Object arg0) {
+		    // Bruce (11 Feb 2020): to avoid Comparison method violates its general contract.
+		    if (this == arg0) return 0;
+            if (arg0 == null) return -1;
+            if (this.equals(arg0)) return 0;
 			if (arg0 instanceof MedianCellSorter) {
 				MedianCellSorter other = (MedianCellSorter) arg0;
-				if (medianValue < other.medianValue) {
-					return -1;
-				} else if (medianValue > other.medianValue) {
-					return 1;
-				}
-				else {
-					return 0;
-				}
+				int value = Double.compare(this.medianValue, other.medianValue);
+                if (value != 0) return value;
+                return this.hashCode() - other.hashCode();
+//				if (medianValue < other.medianValue) {
+//					return -1;
+//				} else if (medianValue > other.medianValue) {
+//					return 1;
+//				}
+//				else {
+//					return 0;
+//				}
 				//TODO: don't know what this does, but at least does not break contract
 				//Bruce testing comment out
 //				return (nudge ? 1 : -1) * cell.hashCode()
 //						- other.cell.hashCode();
 
 			}
-			return 0;
+			return -1;
 		}
 	}
 
 	/**
 	 * @return Returns the progress.
 	 */
-	public JGraphLayoutProgress getProgress() {
+	@Override
+    public JGraphLayoutProgress getProgress() {
 		return progress;
 	}
 
