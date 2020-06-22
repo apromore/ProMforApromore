@@ -1,5 +1,5 @@
 # ProMforApromore
-This is a distribution of selected packages (plugins) for the ProM Framework, which have been customized for Apromore.
+This is a distribution of selected packages (plugins) for the ProM Framework, which have been customized for Apromore Community Edition.
 These packages are licensed under LGPL 3.0 and their original code can be found at the links below:
 
 BPMN package code: https://svn.win.tue.nl/repos/prom/Packages/BPMN/Trunk/
